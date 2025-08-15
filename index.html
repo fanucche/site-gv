@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Lista de GVs - Verbo da Vida</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+    th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    .map-btn {
+        background-color: #2196F3;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .map-btn:hover {
+        background-color: #0b7dda;
+    }
+</style>
+</head>
+<body>
+
+<h1>Lista de GVs - Verbo da Vida</h1>
+<table id="gv-table">
+    <thead>
+        <tr>
+            <th>Nome GV</th>
+            <th>Líder</th>
+            <th>Endereço</th>
+            <th>Dia/Horário</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/1qHRR0-81WUaFLct6XOODIwcAaGn9kff1p5_NDkBgoj0/gviz/tq?tqx=out:csv";
+
+fetch(CSV_URL)
+    .then(response => response.text())
+    .then(data => {
+        const linhas = data.split("\n").slice(1); // ignora cabeçalho
+        const tbody = document.querySelector("#gv-table tbody");
+        
+        linhas.forEach(linha => {
+            const colunas = linha.split(",");
+            if (colunas.length > 3) {
+                const nomeGV = colunas[0];
+                const lider = colunas[1];
+                const endereco = colunas[2];
+                const diaHorario = colunas[3];
+                
+                const urlMapa = "https://www.google.com/maps?q=" + encodeURIComponent(endereco);
+                
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${nomeGV}</td>
+                    <td>${lider}</td>
+                    <td>${endereco}</td>
+                    <td>${diaHorario}</td>
+                    <td><a href="${urlMapa}" target="_blank" class="map-btn">Ver no Mapa</a></td>
+                `;
+                tbody.appendChild(tr);
+            }
+        });
+    })
+    .catch(err => console.error("Erro ao carregar CSV:", err));
+</script>
+
+</body>
+</html>
