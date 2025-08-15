@@ -14,6 +14,14 @@
         text-align: center;
         color: #333;
     }
+    iframe {
+        display: block;
+        margin: 0 auto 20px;
+        border: none;
+        width: 100%;
+        height: 480px;
+        max-width: 1000px;
+    }
     table {
         width: 100%;
         border-collapse: collapse;
@@ -49,13 +57,24 @@
 <body>
 
 <h1>Lista de GVs - Verbo da Vida</h1>
+
+<!-- Mapa incorporado -->
+<iframe src="https://www.google.com/maps/d/embed?mid=1djqprmHMlX5FiKNWV9YT7rwE66vlH-o&ehbc=2E312F"></iframe>
+
+<!-- Tabela de GVs -->
 <table id="gv-table">
     <thead>
         <tr>
-            <th>Nome GV</th>
-            <th>Líder</th>
-            <th>Endereço</th>
-            <th>Dia/Horário</th>
+            <th>NOME GV</th>
+            <th>LÍDER</th>
+            <th>FONE</th>
+            <th>CEP</th>
+            <th>ENDEREÇO</th>
+            <th>Nº</th>
+            <th>BAIRRO</th>
+            <th>CIDADE</th>
+            <th>DIA</th>
+            <th>HORA</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -68,25 +87,38 @@ const CSV_URL = "https://docs.google.com/spreadsheets/d/1qHRR0-81WUaFLct6XOODIwc
 fetch(CSV_URL)
     .then(response => response.text())
     .then(data => {
-        const linhas = data.split("\n").slice(1); // ignora cabeçalho
+        const linhas = data.split("\n").slice(1); // Ignora cabeçalho
         const tbody = document.querySelector("#gv-table tbody");
         
         linhas.forEach(linha => {
             const colunas = linha.split(",");
-            if (colunas.length > 3) {
+            if (colunas.length > 9) {
                 const nomeGV = colunas[0];
                 const lider = colunas[1];
-                const endereco = colunas[2];
-                const diaHorario = colunas[3];
+                const fone = colunas[2];
+                const cep = colunas[3];
+                const endereco = colunas[4];
+                const numero = colunas[5];
+                const bairro = colunas[6];
+                const cidade = colunas[7];
+                const dia = colunas[8];
+                const hora = colunas[9];
                 
-                const urlMapa = "https://www.google.com/maps?q=" + encodeURIComponent(endereco);
+                const enderecoCompleto = `${endereco} ${numero}, ${bairro}, ${cidade}, ${cep}`;
+                const urlMapa = "https://www.google.com/maps?q=" + encodeURIComponent(enderecoCompleto);
                 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${nomeGV}</td>
                     <td>${lider}</td>
+                    <td>${fone}</td>
+                    <td>${cep}</td>
                     <td>${endereco}</td>
-                    <td>${diaHorario}</td>
+                    <td>${numero}</td>
+                    <td>${bairro}</td>
+                    <td>${cidade}</td>
+                    <td>${dia}</td>
+                    <td>${hora}</td>
                     <td><a href="${urlMapa}" target="_blank" class="map-btn">Ver no Mapa</a></td>
                 `;
                 tbody.appendChild(tr);
